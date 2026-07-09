@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design Inspiration Cards</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="intro">
+        <p class="eyebrow">Product Design Toolkit</p>
+        <h1>Design Inspiration Cards</h1>
+        <p class="subtitle">点击按钮获取一个随机设计灵感方向</p>
+      </section>
+
+      <section class="card" aria-live="polite">
+        <div class="color-panel">
+          <span class="label">配色组成</span>
+          <div class="color-list" id="colorList"></div>
+        </div>
+
+        <div class="card-header">
+          <span class="label">Design Keyword</span>
+          <h2 id="keyword">Calm Dashboard</h2>
+        </div>
+
+        <div class="card-grid">
+          <div>
+            <span class="label">推荐配色</span>
+            <p id="palette">冰川蓝、纯白、雾灰</p>
+          </div>
+          <div>
+            <span class="label">适用场景</span>
+            <p id="scene">SaaS 数据看板、团队协作工具</p>
+          </div>
+        </div>
+
+        <div class="description">
+          <span class="label">风格描述</span>
+          <p id="description">
+            使用清晰的留白、克制的线条和柔和蓝色强调重点，让复杂信息更易扫描。
+          </p>
+        </div>
+      </section>
+
+      <button class="generate-btn" id="generateBtn" type="button">
+        生成新的灵感
+      </button>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
