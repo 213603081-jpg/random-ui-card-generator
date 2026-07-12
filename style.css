@@ -6,30 +6,54 @@ body {
   --accent: #1769d8;
   --accent-dark: #0f57ba;
   --accent-soft: #f2f7ff;
+  --secondary: #8fc2ff;
   --card-border: rgba(78, 140, 220, 0.16);
   --shadow-color: rgba(41, 91, 156, 0.14);
   --page-glow: rgba(219, 235, 255, 0.85);
+  --mouse-x: 18%;
+  --mouse-y: 16%;
 
   margin: 0;
   min-height: 100vh;
   font-family: Inter, "Segoe UI", Arial, sans-serif;
   color: #162033;
+  background: color-mix(in srgb, var(--accent-soft) 42%, white);
+  transition: background 0.42s ease;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background:
-    radial-gradient(circle at top left, var(--page-glow), transparent 34rem),
-    linear-gradient(135deg, #ffffff, #f8fbff 58%, #ffffff);
-  transition: background 0.25s ease;
+    radial-gradient(
+      circle at var(--mouse-x) var(--mouse-y),
+      color-mix(in srgb, var(--accent) 18%, white) 0,
+      color-mix(in srgb, var(--accent) 10%, transparent) 13rem,
+      transparent 24rem
+    ),
+    radial-gradient(
+      circle at calc(100% - var(--mouse-x)) calc(100% - var(--mouse-y)),
+      color-mix(in srgb, var(--secondary) 16%, white) 0,
+      color-mix(in srgb, var(--secondary) 8%, transparent) 12rem,
+      transparent 22rem
+    );
+  opacity: 0.72;
+  transition: opacity 0.35s ease;
 }
 
 .page {
   width: min(92%, 760px);
   min-height: 100vh;
   margin: 0 auto;
-  padding: 72px 0;
+  padding: 24px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 28px;
+  gap: 14px;
 }
 
 .intro {
@@ -61,41 +85,107 @@ h1 {
 
 .card {
   width: 100%;
-  padding: 34px;
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
   border: 1px solid var(--card-border);
   border-radius: 24px;
-  background: rgba(255, 255, 255, 0.92);
+  background: color-mix(in srgb, var(--accent-soft) 18%, white);
   box-shadow: 0 18px 48px var(--shadow-color);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transform-origin: center;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(
+      120deg,
+      transparent 0%,
+      color-mix(in srgb, var(--accent) 18%, transparent) 36%,
+      color-mix(in srgb, var(--secondary) 24%, transparent) 52%,
+      rgba(255, 255, 255, 0.62) 58%,
+      transparent 72%
+    );
+  opacity: 0;
+  transform: translateX(-115%) skewX(-8deg);
+  pointer-events: none;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      circle at 18% 20%,
+      color-mix(in srgb, var(--secondary) 18%, transparent),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 88% 82%,
+      color-mix(in srgb, var(--accent) 14%, transparent),
+      transparent 36%
+    );
+  opacity: 0;
+  pointer-events: none;
+}
+
+.card.is-switching-out {
+  animation: cardFoldOut 0.18s ease-in forwards;
+}
+
+.card.is-switching-in {
+  animation: cardPopIn 0.58s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+.card.is-switching-in::before {
+  animation: cardSheen 0.72s ease-out both;
+}
+
+.card.is-switching-in::after {
+  animation: cardColorWash 0.72s ease-out both;
 }
 
 .color-panel {
-  margin-bottom: 26px;
-  padding: 20px;
-  border-radius: 18px;
-  background:
-    linear-gradient(135deg, var(--accent-soft), #ffffff 55%),
-    #ffffff;
+  margin-bottom: 14px;
+  padding: 12px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--accent-soft) 58%, white);
   border: 1px solid var(--card-border);
 }
 
 .color-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 14px;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .color-item {
   min-width: 0;
-  min-height: 132px;
-  padding: 18px;
+  min-height: 56px;
+  padding: 10px 12px;
   border: 1px solid rgba(22, 32, 51, 0.08);
-  border-radius: 14px;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.card.is-switching-in .color-item {
+  animation: swatchFloatIn 0.5s cubic-bezier(0.18, 0.8, 0.28, 1.08) both;
+  animation-delay: calc(90ms + var(--swatch-index) * 70ms);
 }
 
 .color-name {
@@ -113,39 +203,76 @@ h1 {
 }
 
 .card-header {
-  padding-bottom: 24px;
-  border-bottom: 1px solid #e5eefb;
+  padding-bottom: 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--secondary) 28%, #e5eefb);
 }
 
 h2 {
   margin: 8px 0 0;
   color: var(--accent-dark);
-  font-size: clamp(1.7rem, 5vw, 2.45rem);
+  font-size: clamp(1.6rem, 4.6vw, 2.2rem);
   line-height: 1.15;
   letter-spacing: 0;
+}
+
+.card-grid .label {
+  color: color-mix(in srgb, var(--secondary) 72%, #162033);
+}
+
+.card-grid > div {
+  padding: 12px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--secondary) 10%, white);
+  border: 1px solid color-mix(in srgb, var(--secondary) 22%, transparent);
 }
 
 .card-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
-  margin: 26px 0;
+  gap: 16px;
+  margin: 14px 0;
 }
 
 .card p {
-  margin: 8px 0 0;
+  margin: 6px 0 0;
   color: #33415c;
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.55;
 }
 
 .description {
-  padding: 20px;
-  border-radius: 16px;
-  background: var(--accent-soft);
+  padding: 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--secondary) 12%, var(--accent-soft));
+  border: 1px solid color-mix(in srgb, var(--secondary) 18%, transparent);
+}
+
+.description .label {
+  color: color-mix(in srgb, var(--secondary) 72%, #162033);
+}
+
+.card.is-switching-in .color-panel,
+.card.is-switching-in .card-header,
+.card.is-switching-in .card-grid,
+.card.is-switching-in .description {
+  animation: contentSlideIn 0.42s ease-out both;
+}
+
+.card.is-switching-in .card-header {
+  animation-delay: 40ms;
+}
+
+.card.is-switching-in .card-grid {
+  animation-delay: 100ms;
+}
+
+.card.is-switching-in .description {
+  animation-delay: 150ms;
 }
 
 .generate-btn {
+  position: relative;
+  overflow: hidden;
   border: 0;
   border-radius: 999px;
   padding: 14px 28px;
@@ -158,6 +285,10 @@ h2 {
   transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
+.generate-btn::after {
+  content: none;
+}
+
 .generate-btn:hover {
   background: var(--accent-dark);
   box-shadow: 0 16px 30px var(--shadow-color);
@@ -168,13 +299,176 @@ h2 {
   transform: translateY(0);
 }
 
+.generate-btn.is-loading {
+  animation: buttonPulse 0.62s ease both;
+}
+
+.generate-btn:disabled {
+  cursor: wait;
+}
+
+.mini-firework {
+  position: absolute;
+  top: 82px;
+  left: 50%;
+  z-index: 2;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.mini-firework span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 72%, white);
+  opacity: 0;
+  transform: rotate(var(--angle)) translateX(0) scale(0.55);
+  animation: miniFirework 0.72s ease-out var(--delay) both;
+}
+
+.mini-firework span:nth-child(even) {
+  width: 5px;
+  height: 5px;
+  background: var(--secondary);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--secondary) 72%, white);
+}
+
+@keyframes cardFoldOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+    filter: blur(5px);
+  }
+}
+
+@keyframes cardPopIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+    filter: blur(10px);
+  }
+
+  68% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.006);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes cardSheen {
+  0% {
+    opacity: 0;
+    transform: translateX(-115%) skewX(-8deg);
+  }
+
+  35% {
+    opacity: 0.92;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(115%) skewX(-8deg);
+  }
+}
+
+@keyframes cardColorWash {
+  0% {
+    opacity: 0;
+  }
+
+  34% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes swatchFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes contentSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes buttonPulse {
+  45% {
+    transform: translateY(-1px) scale(0.96);
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes miniFirework {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateX(0) scale(0.35);
+  }
+
+  22% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateX(var(--distance)) scale(0.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 @media (max-width: 620px) {
   .page {
-    padding: 42px 0;
+    padding: 28px 0;
+    gap: 16px;
   }
 
   .card {
-    padding: 24px;
+    padding: 20px;
     border-radius: 20px;
   }
 
@@ -187,6 +481,6 @@ h2 {
   }
 
   .color-item {
-    min-height: 96px;
+    min-height: 72px;
   }
 }
